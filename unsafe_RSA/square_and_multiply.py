@@ -6,7 +6,10 @@ def square_and_multiply(ot, n, e):
     for i in "{0:b}".format(e):
         st = (st ** 2) % n
         if i == '1':
+         #   if st * ot > n:
+          #      print("reduction")
             st = (st * ot) % n
+
     return st
 
 
