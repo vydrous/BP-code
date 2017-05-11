@@ -47,7 +47,6 @@ while not found:
         t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
 
         r = t.timeit(10)
-        #print(tmp, r, i)
         if counted_sq_mul.square_and_multiply(tmp, n, exp):
             reduced_dict[tmp] = r
         else:
@@ -56,19 +55,21 @@ while not found:
     r1 = 0
     count = 0
     for i in reduced_dict:
+        count += 1
         r1 += reduced_dict[i]
     r1 /= count
 
     r2 = 0
     count = 0
-    for i in reduced_dict:
-        r2 += reduced_dict[i]
+    for i in unreduced_dict:
+        count += 1
+        r2 += unreduced_dict[i]
     r2 /= count
 
 
     print("\n%s\n\n%s" % (r1, r2))
 
-    if r1 - r2 > 0.003:
+    if r1 - r2 > 0.00001:
         last_bit = 1  # change wheter tested bit is 0 or 1
         posbits += 1
     else:
