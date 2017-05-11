@@ -1,15 +1,14 @@
 #!/usr/bin/python3
 
-
-def montgomery_product(a, b, n_inv, r, n):
+def montgomery_product(a, b, n_inv, r, n, cnt):
     t = a * b
     m = (t * n_inv) % r
     u = (t + m * n) // r
     if u > n:
-        return u - n
-    return u
+        return u - n, ++cnt
+    return u, cnt
 
-def montgomery_multiplication(a, b, n):
+def montgomery_multiplication(a, b, n, cnt):
     r = 2 ** (len(bin(n)) - 2)
     g, n_inv, r_inv = egcd(n, r)
 
@@ -20,7 +19,7 @@ def montgomery_multiplication(a, b, n):
         n_inv = -n_inv
 
     a1 = (a * r) % n
-    return montgomery_product(a1, b, n_inv, r, n)
+    return montgomery_product(a1, b, n_inv, r, n, cnt)
 
 #    print(r)
 #    t = a * b
@@ -51,26 +50,14 @@ def modinv(a, m):
 
 def square_and_multiply(ot, n, e):
     st = 1
+    cnt = 0
     for i in "{0:b}".format(int(e)):
-        st = montgomery_multiplication(st, st, n)
+        st, cnt = montgomery_multiplication(st, st, n, cnt)
         if i == '1':
          #   if st * ot > n:
           #      print("reduction")
-            st = montgomery_multiplication(st, ot, n)
+            st, cnt = montgomery_multiplication(st, ot, n, cnt)
 
-    return st
+    return cnt
 
 
-#a = 5
-#b = 3
-#n = 13
-#
-#print(montgomery_multiplication(a, b, n))
-
-#ot = 1520
-#p = 43
-#q = 59
-#e = 13
-#n = p * q
-#fi = (p - 1) * (q - 1)
-#print(square_and_multiply(ot, p, q, e))

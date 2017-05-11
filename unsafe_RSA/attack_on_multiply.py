@@ -8,6 +8,10 @@ import decimal
 import timeit
 import encrypt
 import square_and_multiply
+import counted_sq_mul
+import bigfloat
+
+
 
 with open('../keys/public.pem') as r:
     pubkey = RSA.importKey(r.read(), '1234')
@@ -33,34 +37,34 @@ posbits = 1
 i = 2
 
 while not found:
-    # m1 = cryptGen.randrange(decimal.Decimal(n ** (1 / 6)), decimal.Decimal(n ** (1 / 5)), 1)
-    # m2 = cryptGen.seed(decimal.Decimal(n ** (1 / 6)))
 
-    sufficient = 0
-    while not sufficient:
-        m1 = random.randint(0, n)
-        if n < m1 * ((m1 ** (exp - 1)) % n):
-            sufficient = 1
+    reduced_dict = dict()
+    unreduced_dict = dict()
+
+    for i in range(0, 1000):
+        tmp = random.randint(0, n)
+
+        t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
+
+        r = t.timeit(10)
+        #print(tmp, r, i)
+        if counted_sq_mul.square_and_multiply(tmp, n, exp):
+            reduced_dict[tmp] = r
         else:
-            print("m1 bad")
+            unreduced_dict[tmp] = r
 
-    sufficient = 0
-    while not sufficient:
-        m2 = random.randint(0, dec_n ** 1/exp )
-        print(m2)
-        if (m2 * ((m2 ** (exp - 1)) % n) ) < n:
-            sufficient = 1
-        else:
-            print("m2 bad")
+    r1 = 0
+    count = 0
+    for i in reduced_dict:
+        r1 += reduced_dict[i]
+    r1 /= count
 
-    print(bin(m1))
-    print(bin(m2))
+    r2 = 0
+    count = 0
+    for i in reduced_dict:
+        r2 += reduced_dict[i]
+    r2 /= count
 
-    t1 = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt;import attack_on_multiply; m1 = %i' % m1)
-    t2 = timeit.Timer('decrypt.decrypt(int(m2))', setup='import decrypt;import attack_on_multiply; m2 = %i' % m2)
-
-    r1 = t1.timeit(100)
-    r2 = t2.timeit(100)
 
     print("\n%s\n\n%s" % (r1, r2))
 
@@ -75,8 +79,8 @@ while not found:
     exp = (exp + last_bit - 1) * 2
     i += 1
 
-    if square_and_multiply.square_and_multiply(int(encrypt.encrypt(m1)), n, d) == m1:
-        found = 1
+    #if square_and_multiply.square_and_multiply(int(encrypt.encrypt(m1)), n, d) == m1:
+    #found = 1
         # else:
         #
         # exp = 3

@@ -3,12 +3,12 @@ import encrypt
 import decrypt
 
 
-ot = 2644223875160994395807661232131084159313618731857124877138595181097623164945291055226923432515619823748690572792352183681024
+ot = 264422387516565135435430
 
 print(ot)
 
-st = decrypt.decrypt(ot)
+st = encrypt.encrypt(ot)
 
 print(st)
 
-#print(decrypt.decrypt(st))
+print(decrypt.decrypt(st))
