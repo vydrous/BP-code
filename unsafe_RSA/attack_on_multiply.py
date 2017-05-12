@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-import math
+
 from Crypto.PublicKey import RSA
 import random
 import decrypt
@@ -20,10 +20,7 @@ with open('../keys/public.pem') as r:
 n = getattr(pubkey.key, 'n')
 e = getattr(pubkey.key, 'e')
 dec_n = decimal.Decimal(n)
-# todo
-# find messages to compare times
-# m1 = 5348513  # m1^(2i + posbits) < n and m1^(2i + posbits +1) >= n
-# m2 = 10354135  # m2^(2i + posbits +1) < n
+
 found = 0
 
 
@@ -35,56 +32,102 @@ exp = 3
 d = '1'
 posbits = 1
 i = 2
+message_times = dict()
+
+for i in range(0, 500):
+   tmp = random.randint(0, n)
+
+   t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
+
+   r = t.timeit(10)
+
+   message_times[tmp] = r
+
+fail_cnt = 0
 
 while not found:
 
     reduced_dict = dict()
     unreduced_dict = dict()
+    print(bin(exp))
 
-    for i in range(0, 1000):
-        tmp = random.randint(0, n)
-
-        t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
-
-        r = t.timeit(10)
-        if counted_sq_mul.square_and_multiply(tmp, n, exp):
-            reduced_dict[tmp] = r
+    for i in message_times:
+        if counted_sq_mul.square_and_multiply(i, n, exp):
+            reduced_dict[i] = message_times[i]
         else:
-            unreduced_dict[tmp] = r
+            unreduced_dict[i] = message_times[i]
+
+
+    while not unreduced_dict or not reduced_dict:
+
+#        message_times = dict()
+
+        for i in range(0, 500):
+
+            tmp = random.randint(0, n)
+
+            t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
+
+            r = t.timeit(10)
+
+            message_times[tmp] = r
+
+        for i in message_times:
+            if counted_sq_mul.square_and_multiply(i, n, exp):
+                reduced_dict[i] = message_times[i]
+            else:
+                unreduced_dict[i] = message_times[i]
 
     r1 = 0
     count = 0
     for i in reduced_dict:
-        count += 1
+        count = count + 1
         r1 += reduced_dict[i]
+#        if count >= len(unreduced_dict):
+#            break
+    print("reduced %i" % count)
     r1 /= count
 
     r2 = 0
     count = 0
     for i in unreduced_dict:
-        count += 1
+        count = count + 1
         r2 += unreduced_dict[i]
+ #       if count >= len(reduced_dict):
+ #           break
+    print("unreduced %i" % count)
     r2 /= count
 
 
     print("\n%s\n\n%s" % (r1, r2))
 
+    print("differ is %f" % (r1 - r2))
     if r1 - r2 > 0.00001:
         last_bit = 1  # change wheter tested bit is 0 or 1
         posbits += 1
     else:
         last_bit = 0
+        if r2 > r1:
+            fail_cnt += 1
+            print("reduced time is greater %i" % fail_cnt)
 
     d += str(last_bit)
     print("d = %s" % d)
-    exp = (exp + last_bit - 1) * 2
+    exp = (exp + last_bit - 1) * 2 +1
     i += 1
 
-    #if square_and_multiply.square_and_multiply(int(encrypt.encrypt(m1)), n, d) == m1:
-    #found = 1
-        # else:
-        #
-        # exp = 3
-        # d = '1'
-        # posbits = 1
-        # i = 2
+    test_msg = reduced_dict.popitem()[0]
+
+    if square_and_multiply.square_and_multiply(encrypt.encrypt(test_msg), n, d) == test_msg:
+        print("found")
+        found = 1
+    else:
+        if len(d) > n_length:
+            exp = 3
+            d = '1'
+            posbits = 1
+            i = 2
+            fail_cnt = 0
+            message_times = dict()
+
+#desired d is 1000100011101110111011101110011010011111000001110111110111000100000110000111010001101010000100100100101101111011000000011000001

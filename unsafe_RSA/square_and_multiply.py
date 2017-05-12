@@ -9,29 +9,12 @@ def montgomery_product(a, b, n_inv, r, n):
         return u - n
     return u
 
-def montgomery_multiplication(a, b, n):
-    r = 2 ** (len(bin(n)) - 2)
-    g, n_inv, r_inv = egcd(n, r)
 
-
-
-    if (r * r_inv + n * n_inv) == 1:
-        r_inv = abs(r_inv)
-        n_inv = -n_inv
+def montgomery_multiplication(a, b, n, r, n_inv):
 
     a1 = (a * r) % n
     return montgomery_product(a1, b, n_inv, r, n)
 
-#    print(r)
-#    t = a * b
-#    print(t)
-#    m = (modinv(n, r) * (t % r)) % r
-#    print(m)
-#    t = (t + m * n) // r
-#    print(t)
-#    if t > n:
-#        t = t - n
-#    return t
 
 def egcd(a, b):
     if a == 0:
@@ -50,13 +33,20 @@ def modinv(a, m):
 
 
 def square_and_multiply(ot, n, e):
+    r = 2 ** (len(bin(n)) - 2)
+    g, n_inv, r_inv = egcd(n, r)
+
+    if (r * r_inv + n * n_inv) == 1:
+        r_inv = abs(r_inv)
+        n_inv = -n_inv
+
     st = 1
     for i in "{0:b}".format(int(e)):
-        st = montgomery_multiplication(st, st, n)
+        st = montgomery_multiplication(st, st, n, r, n_inv)
         if i == '1':
          #   if st * ot > n:
           #      print("reduction")
-            st = montgomery_multiplication(st, ot, n)
+            st = montgomery_multiplication(st, st, n, r, n_inv)
 
     return st
 
