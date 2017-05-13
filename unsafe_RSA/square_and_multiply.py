@@ -46,7 +46,7 @@ def square_and_multiply(ot, n, e):
         if i == '1':
          #   if st * ot > n:
           #      print("reduction")
-            st = montgomery_multiplication(st, st, n, r, n_inv)
+            st = montgomery_multiplication(st, ot, n, r, n_inv)
 
     return st
 

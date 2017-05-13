@@ -1,20 +1,19 @@
 #!/usr/bin/python3
 
 
-def montgomery_product(a, b, n_inv, r, n, cnt):
+def montgomery_product(a, b, n_inv, r, n):
     t = a * b
     m = (t * n_inv) % r
     u = (t + m * n) // r
     if u > n:
-        cnt += 1
-        return u - n, cnt
-    return u, cnt
+        return u - n, 1
+    return u, 0
 
 
-def montgomery_multiplication(a, b, n, r, n_inv, cnt):
+def montgomery_multiplication(a, b, n, r, n_inv):
 
     a1 = (a * r) % n
-    return montgomery_product(a1, b, n_inv, r, n, cnt)
+    return montgomery_product(a1, b, n_inv, r, n)
 
 
 def egcd(a, b):
@@ -43,11 +42,10 @@ def square_and_multiply(ot, n, e):
 
     st = 1
     for i in "{0:b}".format(int(e)):
+        st, cnt = montgomery_multiplication(st, st, n, r, n_inv)
         cnt = 0
-        st, cnt = montgomery_multiplication(st, st, n, r, n_inv, cnt)
         if i == '1':
-            cnt = 0
-            st, cnt = montgomery_multiplication(st, ot, n, r, n_inv, cnt)
+            st, cnt = montgomery_multiplication(st, ot, n, r, n_inv)
 
     return cnt
 

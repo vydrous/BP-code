@@ -34,8 +34,8 @@ posbits = 1
 i = 2
 message_times = dict()
 
-for i in range(0, 500):
-   tmp = random.randint(0, n)
+for i in range(0, 1000):
+   tmp = random.randint(n/2, n)
 
    t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
 
@@ -62,9 +62,9 @@ while not found:
 
 #        message_times = dict()
 
-        for i in range(0, 500):
+        for i in range(0, 1000):
 
-            tmp = random.randint(0, n)
+            tmp = random.randint(n/2, n)
 
             t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
 
@@ -102,7 +102,7 @@ while not found:
     print("\n%s\n\n%s" % (r1, r2))
 
     print("differ is %f" % (r1 - r2))
-    if r1 - r2 > 0.00001:
+    if r1 - r2 > 0.000001:
         last_bit = 1  # change wheter tested bit is 0 or 1
         posbits += 1
     else:
