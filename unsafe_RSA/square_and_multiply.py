@@ -24,12 +24,12 @@ def egcd(a, b):
         return (g, x - (b // a) * y, y)
 
 
-def modinv(a, m):
-    g, x, y = egcd(a, m)
-    if g != 1:
-        raise Exception('modular inverse does not exist')
-    else:
-        return x % m
+#def modinv(a, m):
+#    g, x, y = egcd(a, m)
+#    if g != 1:
+#        raise Exception('modular inverse does not exist')
+#    else:
+#        return x % m
 
 
 def square_and_multiply(ot, n, e):
@@ -37,8 +37,9 @@ def square_and_multiply(ot, n, e):
     g, n_inv, r_inv = egcd(n, r)
 
     if (r * r_inv + n * n_inv) == 1:
-        r_inv = abs(r_inv)
         n_inv = -n_inv
+    else:
+        raise Exception("bad GCD")
 
     st = 1
     for i in "{0:b}".format(int(e)):

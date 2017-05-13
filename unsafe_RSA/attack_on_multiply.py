@@ -34,16 +34,31 @@ posbits = 1
 i = 2
 message_times = dict()
 
-for i in range(0, 1000):
-   tmp = random.randint(n/2, n)
 
-   t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
+#d = random.randint(n/2, n)
 
-   r = t.timeit(10)
+upper_range = 5000
 
-   message_times[tmp] = r
+for i in range(0, upper_range):
+    tmp = random.randint(n/2, n)
+
+    t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
+    r = t.timeit(1)
+    message_times[tmp] = r
+
+#    t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
+#    r = t.timeit(100)
+#    [tmp] = r
+
+
 
 fail_cnt = 0
+
+#for i in message_times.values():
+#    print(i)
+#
+#exit(0)
+
 
 while not found:
 
@@ -51,32 +66,39 @@ while not found:
     unreduced_dict = dict()
     print(bin(exp))
 
+#    for i in message_times:
+#        if counted_sq_mul.square_and_multiply(i, n, exp):
+#            reduced_dict[i] = message_times[i]
+#        else:
+#            unreduced_dict[i] = message_times[i]
+
     for i in message_times:
-        if counted_sq_mul.square_and_multiply(i, n, exp):
+        sq, mult, last = counted_sq_mul.square_and_multiply(i, n, exp)
+        if last:
             reduced_dict[i] = message_times[i]
         else:
             unreduced_dict[i] = message_times[i]
-
 
     while not unreduced_dict or not reduced_dict:
 
 #        message_times = dict()
 
-        for i in range(0, 1000):
+        for i in range(0, upper_range):
 
             tmp = random.randint(n/2, n)
 
             t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
 
-            r = t.timeit(10)
+            r = t.timeit(1)
 
             message_times[tmp] = r
+            for i in message_times:
+                sq, mult, last = counted_sq_mul.square_and_multiply(i, n, exp)
+                if last:
+                    reduced_dict[i] = message_times[i]
+                else:
+                    unreduced_dict[i] = message_times[i]
 
-        for i in message_times:
-            if counted_sq_mul.square_and_multiply(i, n, exp):
-                reduced_dict[i] = message_times[i]
-            else:
-                unreduced_dict[i] = message_times[i]
 
     r1 = 0
     count = 0
@@ -86,7 +108,7 @@ while not found:
 #        if count >= len(unreduced_dict):
 #            break
     print("reduced %i" % count)
-    r1 /= count
+    r1 /= float(count)
 
     r2 = 0
     count = 0
@@ -96,7 +118,15 @@ while not found:
  #       if count >= len(reduced_dict):
  #           break
     print("unreduced %i" % count)
-    r2 /= count
+    r2 /= float(count)
+
+#    tmp = reduced_dict.popitem()[0]
+#    t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
+#    r1 = t.timeit(100)
+#
+#    tmp = unreduced_dict.popitem()[0]
+#    t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
+#    r2 = t.timeit(100)
 
 
     print("\n%s\n\n%s" % (r1, r2))
@@ -113,7 +143,7 @@ while not found:
 
     d += str(last_bit)
     print("d = %s" % d)
-    exp = (exp + last_bit - 1) * 2 +1
+    exp = (exp + last_bit - 1) * 2 + 1
     i += 1
 
     test_msg = reduced_dict.popitem()[0]

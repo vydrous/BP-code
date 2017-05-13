@@ -24,12 +24,12 @@ def egcd(a, b):
         return (g, x - (b // a) * y, y)
 
 
-def modinv(a, m):
-    g, x, y = egcd(a, m)
-    if g != 1:
-        raise Exception('modular inverse does not exist')
-    else:
-        return x % m                                            #source: http://stackoverflow.com/questions/4798654/modular-multiplicative-inverse-function-in-python
+#def modinv(a, m):
+#    g, x, y = egcd(a, m)
+#    if g != 1:
+#        raise Exception('modular inverse does not exist')
+#    else:
+#        return x % m                                            #source: http://stackoverflow.com/questions/4798654/modular-multiplicative-inverse-function-in-python
 
 
 def square_and_multiply(ot, n, e):
@@ -40,13 +40,16 @@ def square_and_multiply(ot, n, e):
         r_inv = -r_inv
         n_inv = -n_inv
 
+    sq = 0
+    mult = 0
+
     st = 1
     for i in "{0:b}".format(int(e)):
-        st, cnt = montgomery_multiplication(st, st, n, r, n_inv)
-        cnt = 0
+        st, last = montgomery_multiplication(st, st, n, r, n_inv)
+        sq += last
         if i == '1':
-            st, cnt = montgomery_multiplication(st, ot, n, r, n_inv)
-
-    return cnt
+            st, last = montgomery_multiplication(st, ot, n, r, n_inv)
+            mult += last
+    return sq, mult, last
 
 
