@@ -11,6 +11,29 @@ import square_and_multiply
 import counted_sq_mul
 import bigfloat
 
+
+def mont_exp(m, x, n):
+    r = 2 ** (len(bin(n)) - 2)
+    g, n_inv, r_inv = square_and_multiply.egcd(n, r)
+
+    if (r * r_inv + n * n_inv) == 1:
+        r_inv = -r_inv
+        n_inv = -n_inv
+
+    m_temp = m
+
+    m0, red0 = counted_sq_mul.montgomery_multiplication(m, m, n, r, n_inv)
+
+    m_temp = counted_sq_mul.montgomery_multiplication(m, x, n, r, n_inv)[0]
+    m1, red1 = counted_sq_mul.montgomery_multiplication(m_temp,m_temp,n,r,n_inv)
+
+    return m0, red0, m1, red1
+
+
+global r
+global n_inv
+global n
+
 with open('../keys/public.pem') as r:
     pubkey = RSA.importKey(r.read(), '1234')
 
@@ -25,68 +48,124 @@ dec_n = decimal.Decimal(n)
 found = 0
 
 n_bit = bin(n)[2:]
-print(n_bit)
+print(n)
 n_length = len(n_bit)
+
+
+r = 2 ** (len(bin(n)) - 2)
+g, n_inv, r_inv = square_and_multiply.egcd(n, r)
+
+if (r * r_inv + n * n_inv) == 1:
+    r_inv = -r_inv
+    n_inv = -n_inv
 
 exp = 3
 d = '1'
 posbits = 1
 i = 2
 message_times = dict()
-
-for i in range(0, 500):
+message_range = 50000
+for i in range(0, message_range):
     tmp = random.randint(0, n)
 
     t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
 
-    r = t.timeit(10)
+    r = t.timeit(1)
 
     message_times[tmp] = r
 
 fail_cnt = 0
 
+current_power = []
+""""
+for i in range(len(message_times)):
+    current_power.append(1)
+    #print(list(message_times.keys())[i],)
+    current_power[i] = square_and_multiply.montgomery_multiplication(int(list(message_times.keys())[i]), 1, n, r, n_inv)
+    current_power[i] = square_and_multiply.montgomery_multiplication(current_power[i], current_power[i], n, r, n_inv)
+
+    #print(current_power[i])
+
+"""
+
 while not found:
 
-    m1_dict = dict()  # (c*c^2)^2 is done with reduction
-    m2_dict = dict()  # (c*c^2)^2 is done without reduction
-    m3_dict = dict()  # (c^2)^2 is done with reduction
-    m4_dict = dict()  # (c^2)^2 is done without reduction
+    m1_dict = dict()  # (c*c^2)^2 is done with reduction [1]
+    m2_dict = dict()  # (c*c^2)^2 is done without reduction [1]
+    m3_dict = dict()  # (c^2)^2 is done with reduction [0]
+    m4_dict = dict()  # (c^2)^2 is done without reduction [0]
 
     print(bin(exp))
 
+    """
+    new_current_power1 = []
+    new_current_power0 = []
+    for j in range(1, n_length):
+        m0, flag0, m1, flag1 = mont_exp(current_power[j], list(message_times.keys())[j], n)
+
+        print("%i %i  %i %i" % (m0, flag0, m1, flag1))
+
+        if flag1:
+            m1_dict.append(list(message_times.values())[j])
+        else:
+            m2_dict.append(list(message_times.values())[j])
+
+        if flag0:
+            m3_dict.append(list(message_times.values())[j])
+        else:
+            m4_dict.append(list(message_times.values())[j])
+
+        new_current_power1.append(m1)
+        new_current_power0.append(m0)
+
+    red1avg = sum(m1_dict) / float(len(m1_dict))
+    unred1avg = sum(m2_dict) / float(len(m2_dict))
+    diff1 = abs(red1avg - unred1avg)
+
+    red0avg = sum(m3_dict) / float(len(m3_dict))
+    unred0avg = sum(m4_dict) / float(len(m4_dict))
+    diff0 = abs(red0avg - unred0avg)
+
+    if diff1 > diff0:
+        d += '1'
+        current_power = new_current_power1
+    else:
+        d += '0'
+        current_power = new_current_power0
+
+    """
     for i in message_times:
-        if counted_sq_mul.square_and_multiply(i, n, exp * 2):
+        dummy, sq, mult = counted_sq_mul.square_and_multiply(i, n, exp * 2)
+        if sq:
             m1_dict[i] = message_times[i]
         else:
             m2_dict[i] = message_times[i]
-
-    for i in message_times:
-        if counted_sq_mul.square_and_multiply(i, n, (exp - 1) * 2):
+        dummy, sq, mult = counted_sq_mul.square_and_multiply(i, n, (exp - 1) * 2)
+        if sq:
             m3_dict[i] = message_times[i]
         else:
             m4_dict[i] = message_times[i]
 
     while not m1_dict or not m2_dict or not m3_dict or not m4_dict:
-
+        print("generating more messages")
         #        message_times = dict()
 
-        for i in range(0, 500):
+        for i in range(0, message_range):
             tmp = random.randint(0, n)
 
             t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
 
-            r = t.timeit(10)
+            r = t.timeit(1)
 
             message_times[tmp] = r
-
         for i in message_times:
-            if counted_sq_mul.square_and_multiply(i, n, exp * 2):
+            dummy, sq, mult = counted_sq_mul.square_and_multiply(i, n, exp * 2)
+            if sq:
                 m1_dict[i] = message_times[i]
             else:
                 m2_dict[i] = message_times[i]
-
-        for j in message_times:
-            if counted_sq_mul.square_and_multiply(j, n, (exp - 1) * 2):
+            dummy, sq, mult = counted_sq_mul.square_and_multiply(i, n, (exp - 1) * 2)
+            if sq:
                 m3_dict[i] = message_times[i]
             else:
                 m4_dict[i] = message_times[i]
@@ -123,26 +202,24 @@ while not found:
     print("m4 %i" % count)
     r4 /= count
 
-
-
     print("\n%s\n%s\n%s\n%s\n" % (r1, r2, r3, r4))
 
     O1 = r1 - r2
     O2 = r3 - r4
 
-    #if O1 < 0:
+    # if O1 < 0:
     #    O1 = 0
-    #if O2 < 0:
+    # if O2 < 0:
     #    O2 = 0
 
-    #print("differ o1 is  %f" % (O1))
-    #print("differ o2 is  %f" % (O2))
+    print("differ o1 is  %f" % (O1))
+    print("differ o2 is  %f" % (O2))
     if (r1 - r2) > (r3 - r4):
         last_bit = 1  # change wheter tested bit is 0 or 1
         posbits += 1
     else:
         last_bit = 0
-       # if r2 > r1:
+        # if r2 > r1:
         #    fail_cnt += 1
         #    print("reduced time is greater %i" % fail_cnt)
 
@@ -153,10 +230,15 @@ while not found:
 
     test_msg = m1_dict.popitem()[0]
 
-    if square_and_multiply.square_and_multiply(encrypt.encrypt(test_msg), n, d) == test_msg:
+    if square_and_multiply.square_and_multiply(encrypt.encrypt(test_msg), n, d + '1') == test_msg:
         print("found")
         found = 1
+        d += '1'
     else:
+        if square_and_multiply.square_and_multiply(encrypt.encrypt(test_msg), n, d + '0') == test_msg:
+            print("found")
+            found = 1
+            d += '0'
         if len(d) > n_length:
             exp = 3
             d = '1'

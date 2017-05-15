@@ -37,10 +37,10 @@ message_times = dict()
 
 #d = random.randint(n/2, n)
 
-upper_range = 5000
+upper_range = 10000
 
 for i in range(0, upper_range):
-    tmp = random.randint(n/2, n)
+    tmp = random.randint(0, n)
 
     t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
     r = t.timeit(1)
@@ -73,19 +73,20 @@ while not found:
 #            unreduced_dict[i] = message_times[i]
 
     for i in message_times:
-        sq, mult, last = counted_sq_mul.square_and_multiply(i, n, exp)
-        if last:
+        dummy, sq, mult = counted_sq_mul.square_and_multiply(i, n, exp)
+        if mult:
             reduced_dict[i] = message_times[i]
         else:
             unreduced_dict[i] = message_times[i]
 
     while not unreduced_dict or not reduced_dict:
+        print("generating more messages")
 
 #        message_times = dict()
 
         for i in range(0, upper_range):
 
-            tmp = random.randint(n/2, n)
+            tmp = random.randint(0, n)
 
             t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
 
@@ -93,8 +94,8 @@ while not found:
 
             message_times[tmp] = r
             for i in message_times:
-                sq, mult, last = counted_sq_mul.square_and_multiply(i, n, exp)
-                if last:
+                dummy, sq, mult = counted_sq_mul.square_and_multiply(i, n, exp)
+                if mult:
                     reduced_dict[i] = message_times[i]
                 else:
                     unreduced_dict[i] = message_times[i]
@@ -132,7 +133,7 @@ while not found:
     print("\n%s\n\n%s" % (r1, r2))
 
     print("differ is %f" % (r1 - r2))
-    if r1 - r2 > 0.000001:
+    if r1 - r2 >= 0.000002:
         last_bit = 1  # change wheter tested bit is 0 or 1
         posbits += 1
     else:
