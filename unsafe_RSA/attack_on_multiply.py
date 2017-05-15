@@ -43,8 +43,8 @@ for i in range(0, upper_range):
     tmp = random.randint(0, n)
 
     t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
-    r = t.timeit(1)
-    message_times[tmp] = r
+    f = t.timeit(1)
+    message_times[tmp] = f
 
 #    t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
 #    r = t.timeit(100)
@@ -90,9 +90,9 @@ while not found:
 
             t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
 
-            r = t.timeit(1)
+            f = t.timeit(1)
 
-            message_times[tmp] = r
+            message_times[tmp] = f
             for i in message_times:
                 dummy, sq, mult = counted_sq_mul.square_and_multiply(i, n, exp)
                 if mult:

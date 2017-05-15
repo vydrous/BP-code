@@ -40,7 +40,7 @@ def square_and_multiply(ot, n, e):
         raise Exception("bad GCD")
 
     ot = (ot * r) % n
-    st = (1*r) % n
+    st = (1 * r) % n
     for i in "{0:b}".format(int(e)):
         st = montgomery_product(st, st, n, r, n_inv)
         if i == '1':
