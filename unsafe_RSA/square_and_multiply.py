@@ -1,19 +1,17 @@
 #!/usr/bin/python3
 
 
-def montgomery_product(a, b, n_inv, r, n):
-    t = a * b
-    m = (t * n_inv) % r
-    u = (t + m * n) // r
+def montgomery_product(a, b, n, r, n_inv):
+    t = (a * b)
+    m = ((t & (r - 1)) * n_inv) & (r - 1)
+    u = (t + m * n) >> (r.bit_length() - 1)
     if u > n:
+        t = m / n
+        m = t / n
         return u - n
     return u
 
 
-def montgomery_multiplication(a, b, n, r, n_inv):
-
-    a1 = (a * r) % n
-    return montgomery_product(a1, b, n_inv, r, n)
 
 
 def egcd(a, b):
@@ -33,30 +31,28 @@ def egcd(a, b):
 
 
 def square_and_multiply(ot, n, e):
-    r = 2 ** (len(bin(n)) - 2)
+    r = 2 ** (n.bit_length())
     g, n_inv, r_inv = egcd(n, r)
 
     if (r * r_inv + n * n_inv) == 1:
-        n_inv = -n_inv
+        n_inv = -n_inv % r
     else:
         raise Exception("bad GCD")
 
-    st = 1
+    ot = (ot * r) % n
+    st = (1*r) % n
     for i in "{0:b}".format(int(e)):
-        st = montgomery_multiplication(st, st, n, r, n_inv)
+        st = montgomery_product(st, st, n, r, n_inv)
         if i == '1':
-         #   if st * ot > n:
-          #      print("reduction")
-            st = montgomery_multiplication(st, ot, n, r, n_inv)
-
-    return st
+            st = montgomery_product(st, ot, n, r, n_inv)
+    return montgomery_product(st, 1, n, r, n_inv)
 
 
 #a = 5
 #b = 3
 #n = 13
 #
-#print(montgomery_multiplication(a, b, n))
+#print(square_and_multiply(a, n, b))
 
 #ot = 1520
 #p = 43

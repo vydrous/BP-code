@@ -1,19 +1,21 @@
 #!/usr/bin/python3
 
 
-def montgomery_product(a, b, n_inv, r, n):
-    t = a * b
-    m = (t * n_inv) % r
-    u = (t + m * n) // r
+def montgomery_product(a, b, n, r, n_inv):
+    t = (a * b)
+    m = ((t & (r - 1)) * n_inv) & (r - 1)
+    u = (t + m * n) >> (r.bit_length() - 1)
     if u > n:
+        t = m / n
+        m = t / n
         return u - n, 1
     return u, 0
 
 
-def montgomery_multiplication(a, b, n, r, n_inv):
+#def montgomery_multiplication(a, b, n, r, n_inv):
 
-    a1 = (a * r) % n
-    return montgomery_product(a1, b, n_inv, r, n)
+#    a1 = (a * r) % n
+#    return montgomery_product(a1, b, n_inv, r, n)
 
 
 def egcd(a, b):
@@ -33,23 +35,22 @@ def egcd(a, b):
 
 
 def square_and_multiply(ot, n, e):
-    r = 2 ** (len(bin(n)) - 2)
+    r = 2 ** (n.bit_length())
     g, n_inv, r_inv = egcd(n, r)
 
     if (r * r_inv + n * n_inv) == 1:
         r_inv = -r_inv
         n_inv = -n_inv
 
-    sq = 0
-    mult = 0
+    ot = (ot * r) % n
+    st = r % n
 
-    st = 1
+
     for i in "{0:b}".format(int(e)):
-        st, last = montgomery_multiplication(st, st, n, r, n_inv)
-        sq += last
+        st, sq = montgomery_product(st, st, n, r, n_inv)
         if i == '1':
-            st, last = montgomery_multiplication(st, ot, n, r, n_inv)
-            mult += last
-    return sq, mult, last
+            st, mult = montgomery_product(st, ot, n, r, n_inv)
+
+    return montgomery_product(st, 1, n, r, n_inv), sq, mult
 
 
