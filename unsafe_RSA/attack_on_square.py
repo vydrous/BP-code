@@ -32,8 +32,7 @@ def mont_exp(m, x, n):
     m_temp = counted_sq_mul.montgomery_product(m, x, n, r, n_inv)[0]
     m1, red1 = counted_sq_mul.montgomery_product(m_temp, m_temp, n, r, n_inv)
 
-    m1 = counted_sq_mul.montgomery_product(m1, 1, n, r, n_inv)
-
+    m1 = square_and_multiply.montgomery_product(m1, 1, n, r, n_inv)
 
     return m0, red0, m1, red1
 
@@ -71,25 +70,29 @@ exp = 3
 d = '1'
 posbits = 1
 i = 2
-message_times = dict()
-message_range = 500
+
+times = []
+messages = []
+
+#message_times = dict()
+message_range = 100000
 for i in range(0, message_range):
     tmp = random.randint(0, n)
 
     t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
 
-    f = t.timeit(1)
+    times.append(t.timeit(1))
 
-    message_times[tmp] = f
+    messages.append(tmp)
 
 fail_cnt = 0
 
 current_power = []
 
-for i in range(len(message_times)):
+for i in range(message_range):
     current_power.append(1)
     #print(list(message_times.keys())[i],)
-    current_power[i] = square_and_multiply.montgomery_product(int(list(message_times.keys())[i]), 1, n, r, n_inv)
+    current_power[i] = square_and_multiply.montgomery_product(messages[i], 1, n, r, n_inv)
     current_power[i] = square_and_multiply.montgomery_product(current_power[i], current_power[i], n, r, n_inv)
 
     #print(current_power[i])
@@ -102,24 +105,24 @@ while not found:
     m3_dict = []  # (c^2)^2 is done with reduction [0]
     m4_dict = []  # (c^2)^2 is done without reduction [0]
 
-    print(bin(exp))
+#    print(bin(exp))
 
     new_current_power1 = []
     new_current_power0 = []
-    for j in range(1, message_range):
-        m0, flag0, m1, flag1 = mont_exp(current_power[j], int(list(message_times.keys())[j]), n)
+    for j in range(message_range):
+        m0, flag0, m1, flag1 = mont_exp(int(current_power[j]), int(messages[j]), n)
 
 #        print("%i %i  %i %i" % m0, flag0, m1, flag1)
 
         if flag1:
-            m1_dict.append(list(message_times.values())[j])
+            m1_dict.append(times[j])
         else:
-            m2_dict.append(list(message_times.values())[j])
+            m2_dict.append(times[j])
 
         if flag0:
-            m3_dict.append(list(message_times.values())[j])
+            m3_dict.append(times[j])
         else:
-            m4_dict.append(list(message_times.values())[j])
+            m4_dict.append(times[j])
 
         new_current_power1.append(m1)
         new_current_power0.append(m0)
@@ -127,10 +130,15 @@ while not found:
     red1avg = sum(m1_dict) / float(len(m1_dict))
     unred1avg = sum(m2_dict) / float(len(m2_dict))
     diff1 = abs(red1avg - unred1avg)
+    print("t1 = %.12f" % diff1)
 
     red0avg = sum(m3_dict) / float(len(m3_dict))
     unred0avg = sum(m4_dict) / float(len(m4_dict))
     diff0 = abs(red0avg - unred0avg)
+    print("t0 = %.12f" % diff0)
+
+    print("diff = %.15f" % (diff1 - diff0))
+
 
     if diff1 > diff0:
         d += '1'
@@ -138,6 +146,7 @@ while not found:
     else:
         d += '0'
         current_power = new_current_power0
+    print(d)
 
     """
     for i in message_times:
@@ -230,11 +239,11 @@ while not found:
 
     d += str(last_bit)
     print("d = %s" % d)
+    
     exp = (exp + last_bit - 1) * 2 + 1
     i += 1
-
 """
-    test_msg = list(message_times.keys())[0]
+    test_msg = messages[0]
 
     if square_and_multiply.square_and_multiply(encrypt.encrypt(test_msg), n, d + '1') == test_msg:
         print("found")

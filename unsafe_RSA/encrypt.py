@@ -10,8 +10,8 @@ def encrypt(ot):
 
         RSAkey = RSA.importKey(r.read(), '1234')
 
-    print(getattr(RSAkey.key, 'n'))
-    print(getattr(RSAkey.key, 'e'))
+#    print(getattr(RSAkey.key, 'n'))
+#    print(getattr(RSAkey.key, 'e'))
 
     n = getattr(RSAkey.key, 'n')
     e = getattr(RSAkey.key, 'e')
