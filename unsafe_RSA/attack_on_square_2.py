@@ -75,7 +75,7 @@ times = []
 messages = []
 
 #message_times = dict()
-message_range = 100000
+message_range = 100
 for i in range(0, message_range):
     tmp = random.randint(0, n)
 
@@ -97,6 +97,8 @@ for i in range(message_range):
 
     #print(current_power[i])
 
+for i in range(1,100):
+    print(times[i])
 
 while not found:
 
