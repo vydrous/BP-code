@@ -6,9 +6,9 @@ def montgomery_product(a, b, n, r, n_inv):
     m = ((t & (r - 1)) * n_inv) & (r - 1)
     u = (t + m * n) >> (r.bit_length() - 1)
     if u > n:
-        m = t / n
-        t = t*t / n * m ** 5
-        return u - n
+#        m = t / n
+#        temp = t*t / n * m ** 5
+        return u - n #- int(temp) + int(temp)
     return u
 
 

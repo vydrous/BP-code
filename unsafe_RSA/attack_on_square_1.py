@@ -34,22 +34,18 @@ global r
 global n_inv
 global n
 
-with open('../keys/public.pem') as r:
-    pubkey = RSA.importKey(r.read(), '1234')
+with open('../keys/public.pem') as pub:
+    pubkey = RSA.importKey(pub.read(), '1234')
 
-with open('../keys/private.pem') as r:
-    privKey = RSA.importKey(r.read(), '1234')
+with open('../keys/private.pem') as priv:
+    privKey = RSA.importKey(priv.read(), '1234')
 
 desired_d = getattr(privKey.key, 'd')
 
-# n = decimal.Decimal(getattr(pubkey.key, 'n'))
 n = getattr(pubkey.key, 'n')
 e = getattr(pubkey.key, 'e')
 dec_n = decimal.Decimal(n)
-# todo
-# find messages to compare times
-# m1 = 5348513  # m1^(2i + posbits) < n and m1^(2i + posbits +1) >= n
-# m2 = 10354135  # m2^(2i + posbits +1) < n
+
 found = 0
 
 n_bit = bin(n)[2:]
@@ -69,10 +65,10 @@ d = '1'
 posbits = 1
 i = 2
 message_times = dict()
-message_range = 10000
+message_range = 20000
 
 gc.disable()
-for i in range(0, message_range):
+for it in range(0, message_range):
     tmp = random.randint(0, n)
 
     t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
@@ -98,7 +94,7 @@ while not found:
     print(bin(exp))
 
 
-    for i in message_times:
+    for it in message_times:
         dummy, sq, mult = counted_sq_mul.square_and_multiply(i, n, exp * 2)
         if sq:
             m1_dict[i] = message_times[i]
@@ -136,7 +132,7 @@ while not found:
 
     r1 = 0
     count = 0
-    for i in m1_dict:
+    for it in m1_dict:
         count = count + 1
         r1 += m1_dict[i]
     print("m1 %i" % count)
@@ -144,7 +140,7 @@ while not found:
 
     r2 = 0
     count = 0
-    for i in m2_dict:
+    for it in m2_dict:
         count = count + 1
         r2 += m2_dict[i]
     print("m2 %i" % count)
@@ -152,7 +148,7 @@ while not found:
 
     r3 = 0
     count = 0
-    for i in m3_dict:
+    for it in m3_dict:
         count = count + 1
         r3 += m3_dict[i]
     print("m3 %i" % count)
@@ -160,7 +156,7 @@ while not found:
 
     r4 = 0
     count = 0
-    for i in m4_dict:
+    for it in m4_dict:
         count = count + 1
         r4 += m4_dict[i]
     print("m4 %i" % count)
