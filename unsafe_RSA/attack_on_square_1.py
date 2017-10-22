@@ -69,13 +69,13 @@ message_range = 20000
 
 gc.disable()
 for it in range(0, message_range):
-    tmp = random.randint(0, n)
+    tmp = random.randint(int(n ** 0.5), n)
 
     t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
 
-    r = t.timeit(1)
+    time = t.timeit(1)
+    message_times[tmp] = time
     gc.collect()
-    message_times[tmp] = r
 
 gc.enable()
 
@@ -95,16 +95,16 @@ while not found:
 
 
     for it in message_times:
-        dummy, sq, mult = counted_sq_mul.square_and_multiply(i, n, exp * 2)
+        dummy, sq, mult = counted_sq_mul.square_and_multiply(it, n, exp * 2)
         if sq:
-            m1_dict[i] = message_times[i]
+            m1_dict[it] = message_times[it]
         else:
-            m2_dict[i] = message_times[i]
-        dummy, sq, mult = counted_sq_mul.square_and_multiply(i, n, (exp - 1) * 2)
+            m2_dict[it] = message_times[it]
+        dummy, sq, mult = counted_sq_mul.square_and_multiply(it, n, (exp - 1) * 2)
         if sq:
-            m3_dict[i] = message_times[i]
+            m3_dict[it] = message_times[it]
         else:
-            m4_dict[i] = message_times[i]
+            m4_dict[it] = message_times[it]
 
     while not m1_dict or not m2_dict or not m3_dict or not m4_dict:
         print("generating more messages")
@@ -118,23 +118,23 @@ while not found:
             r = t.timeit(1)
             gc.collect()
             message_times[tmp] = r
-        for i in message_times:
-            dummy, sq, mult = counted_sq_mul.square_and_multiply(i, n, exp * 2)
+        for it in message_times:
+            dummy, sq, mult = counted_sq_mul.square_and_multiply(it, n, exp * 2)
             if sq:
-                m1_dict[i] = message_times[i]
+                m1_dict[it] = message_times[it]
             else:
-                m2_dict[i] = message_times[i]
-            dummy, sq, mult = counted_sq_mul.square_and_multiply(i, n, (exp - 1) * 2)
+                m2_dict[it] = message_times[it]
+            dummy, sq, mult = counted_sq_mul.square_and_multiply(it, n, (exp - 1) * 2)
             if sq:
-                m3_dict[i] = message_times[i]
+                m3_dict[it] = message_times[it]
             else:
-                m4_dict[i] = message_times[i]
+                m4_dict[it] = message_times[it]
 
     r1 = 0
     count = 0
     for it in m1_dict:
         count = count + 1
-        r1 += m1_dict[i]
+        r1 += m1_dict[it]
     print("m1 %i" % count)
     r1 /= count
 
@@ -142,7 +142,7 @@ while not found:
     count = 0
     for it in m2_dict:
         count = count + 1
-        r2 += m2_dict[i]
+        r2 += m2_dict[it]
     print("m2 %i" % count)
     r2 /= count
 
@@ -150,7 +150,7 @@ while not found:
     count = 0
     for it in m3_dict:
         count = count + 1
-        r3 += m3_dict[i]
+        r3 += m3_dict[it]
     print("m3 %i" % count)
     r3 /= count
 
@@ -158,7 +158,7 @@ while not found:
     count = 0
     for it in m4_dict:
         count = count + 1
-        r4 += m4_dict[i]
+        r4 += m4_dict[it]
     print("m4 %i" % count)
     r4 /= count
 
