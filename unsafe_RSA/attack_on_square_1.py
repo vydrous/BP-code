@@ -9,7 +9,7 @@ import timeit
 import encrypt
 import square_and_multiply
 import counted_sq_mul
-import bigfloat
+import gc
 
 
 def mont_exp(m, x, n):
@@ -36,6 +36,11 @@ global n
 
 with open('../keys/public.pem') as r:
     pubkey = RSA.importKey(r.read(), '1234')
+
+with open('../keys/private.pem') as r:
+    privKey = RSA.importKey(r.read(), '1234')
+
+desired_d = getattr(privKey.key, 'd')
 
 # n = decimal.Decimal(getattr(pubkey.key, 'n'))
 n = getattr(pubkey.key, 'n')
@@ -64,29 +69,24 @@ d = '1'
 posbits = 1
 i = 2
 message_times = dict()
-message_range = 50000
+message_range = 10000
+
+gc.disable()
 for i in range(0, message_range):
     tmp = random.randint(0, n)
 
     t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
 
     r = t.timeit(1)
-
+    gc.collect()
     message_times[tmp] = r
+
+gc.enable()
 
 fail_cnt = 0
 
 current_power = []
-""""
-for i in range(len(message_times)):
-    current_power.append(1)
-    #print(list(message_times.keys())[i],)
-    current_power[i] = square_and_multiply.montgomery_multiplication(int(list(message_times.keys())[i]), 1, n, r, n_inv)
-    current_power[i] = square_and_multiply.montgomery_multiplication(current_power[i], current_power[i], n, r, n_inv)
 
-    #print(current_power[i])
-
-"""
 
 while not found:
 
@@ -97,43 +97,7 @@ while not found:
 
     print(bin(exp))
 
-    """
-    new_current_power1 = []
-    new_current_power0 = []
-    for j in range(1, n_length):
-        m0, flag0, m1, flag1 = mont_exp(current_power[j], list(message_times.keys())[j], n)
 
-        print("%i %i  %i %i" % (m0, flag0, m1, flag1))
-
-        if flag1:
-            m1_dict.append(list(message_times.values())[j])
-        else:
-            m2_dict.append(list(message_times.values())[j])
-
-        if flag0:
-            m3_dict.append(list(message_times.values())[j])
-        else:
-            m4_dict.append(list(message_times.values())[j])
-
-        new_current_power1.append(m1)
-        new_current_power0.append(m0)
-
-    red1avg = sum(m1_dict) / float(len(m1_dict))
-    unred1avg = sum(m2_dict) / float(len(m2_dict))
-    diff1 = abs(red1avg - unred1avg)
-
-    red0avg = sum(m3_dict) / float(len(m3_dict))
-    unred0avg = sum(m4_dict) / float(len(m4_dict))
-    diff0 = abs(red0avg - unred0avg)
-
-    if diff1 > diff0:
-        d += '1'
-        current_power = new_current_power1
-    else:
-        d += '0'
-        current_power = new_current_power0
-
-    """
     for i in message_times:
         dummy, sq, mult = counted_sq_mul.square_and_multiply(i, n, exp * 2)
         if sq:
@@ -149,14 +113,14 @@ while not found:
     while not m1_dict or not m2_dict or not m3_dict or not m4_dict:
         print("generating more messages")
         #        message_times = dict()
-
+        gc.disable()
         for i in range(0, message_range):
             tmp = random.randint(0, n)
 
             t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
 
             r = t.timeit(1)
-
+            gc.collect()
             message_times[tmp] = r
         for i in message_times:
             dummy, sq, mult = counted_sq_mul.square_and_multiply(i, n, exp * 2)
@@ -215,7 +179,7 @@ while not found:
     print("differ o1 is  %f" % (O1))
     print("differ o2 is  %f" % (O2))
     if (r1 - r2) > (r3 - r4):
-        last_bit = 1  # change wheter tested bit is 0 or 1
+        last_bit = 1  # change whether tested bit is 0 or 1
         posbits += 1
     else:
         last_bit = 0
@@ -224,7 +188,8 @@ while not found:
         #    print("reduced time is greater %i" % fail_cnt)
 
     d += str(last_bit)
-    print("d = %s" % d)
+    print("d = 0b%s" % d)
+    print("r = %s" % str(bin(desired_d)))
     exp = (exp + last_bit - 1) * 2 + 1
     i += 1
 
