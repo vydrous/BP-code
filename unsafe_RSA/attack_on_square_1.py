@@ -65,7 +65,7 @@ d = '1'
 posbits = 1
 i = 2
 message_times = dict()
-message_range = 20000
+message_range = 5000
 
 gc.disable()
 for it in range(0, message_range):
@@ -73,7 +73,7 @@ for it in range(0, message_range):
 
     t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
 
-    time = t.timeit(1)
+    time = t.timeit(10)
     message_times[tmp] = time
     gc.collect()
 
