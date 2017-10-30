@@ -4,7 +4,7 @@ from Crypto.PublicKey import RSA
 
 def decrypt(st):
 
-    with open('../keys/private.pem') as r:
+    with open('/opt/project/keys/private.pem') as r:
 
         privKey = RSA.importKey(r.read(), '1234')
 
