@@ -1,0 +1,6 @@
+version: '2'
+services:
+  crypto:
+    image: python-crypto
+    volumes:
+     - /home/vydra/PycharmProjects/keys/:/opt/project/keys

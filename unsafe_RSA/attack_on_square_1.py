@@ -25,7 +25,7 @@ def mont_exp(m, x, n):
     m0, red0 = counted_sq_mul.montgomery_multiplication(m, m, n, r, n_inv)
 
     m_temp = counted_sq_mul.montgomery_multiplication(m, x, n, r, n_inv)[0]
-    m1, red1 = counted_sq_mul.montgomery_multiplication(m_temp,m_temp,n,r,n_inv)
+    m1, red1 = counted_sq_mul.montgomery_multiplication(m_temp, m_temp, n, r, n_inv)
 
     return m0, red0, m1, red1
 
@@ -34,10 +34,10 @@ global r
 global n_inv
 global n
 
-with open('../keys/public.pem') as pub:
+with open('/opt/project/keys/public.pem') as pub:
     pubkey = RSA.importKey(pub.read(), '1234')
 
-with open('../keys/private.pem') as priv:
+with open('/opt/project/keys/private.pem') as priv:
     privKey = RSA.importKey(priv.read(), '1234')
 
 desired_d = getattr(privKey.key, 'd')
