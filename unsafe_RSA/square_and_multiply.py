@@ -2,12 +2,12 @@
 
 
 def montgomery_product(a, b, n, r, n_inv):
-    t = (a * b)
+    t = (a * b)         #trvani operaci, bignum, shift po slovech
     m = ((t & (r - 1)) * n_inv) & (r - 1)
     u = (t + m * n) >> (r.bit_length() - 1)
     if u > n:
-#        m = t / n
-#        temp = t*t / n * m ** 5
+        m = t / n
+        temp = t*t / n * m ** 5
         return u - n #- int(temp) + int(temp)
     return u
 
