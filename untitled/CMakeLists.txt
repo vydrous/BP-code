@@ -5,5 +5,5 @@ link_libraries(crypto)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES main.cpp cmake-build-debug/openssl_mont.cpp)
+set(SOURCE_FILES main.cpp openssl_mont.cpp)
 add_executable(untitled ${SOURCE_FILES})
