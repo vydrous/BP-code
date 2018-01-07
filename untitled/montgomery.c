@@ -20,8 +20,44 @@
 MCTX * init_context(){
 };*/
 
+int extendedEuclid (BIGNUM * a, BIGNUM * x, BIGNUM * b, BIGNUM * y){
 
-BIGNUM * mon_prod(BIGNUM * a, BIGNUM * b, BIGNUM * N, int R_length, BIGNUM * Ni){
+    BIGNUM * zero = BN_new();
+    BIGNUM * tmp = BN_new();
+    BIGNUM * y1 = BN_new();
+    BIGNUM * x1 = BN_new();
+    BN_CTX * ctx = BN_CTX_new();
+
+    BN_dec2bn(&zero, "0");
+
+    printf("%s\n", BN_bn2dec(a));
+
+    if (BN_cmp(a,zero) == 0) {
+        BN_dec2bn(&x, "0");
+        BN_dec2bn(&y, "1");
+
+		return 0;
+	}
+    BN_mod(tmp, b, a, ctx);
+    extendedEuclid(tmp, x1, a, y1);
+
+    BN_div(x, NULL, b, a, ctx);
+    BN_mul(x, x, x1, ctx);
+    BN_sub(x, y1, x);
+
+    y = x1;
+
+    printf("++++++++++++++++++++\na = %s\nb = %s\nx = %s\ny = %s\nx1 = %s\ny1 = %s\n",
+           BN_bn2dec(a), BN_bn2dec(b),
+           BN_bn2dec(x), BN_bn2dec(y),
+           BN_bn2dec(x1), BN_bn2dec(y1));
+
+    BN_CTX_free(ctx);
+    return 0;
+}
+
+
+BIGNUM * mon_prod(BIGNUM * a, BIGNUM * b, BIGNUM * N, int R_length, BIGNUM * Ni, BIGNUM * R){
 
     BIGNUM * t = BN_new();
     BIGNUM * m = BN_new();
@@ -31,27 +67,34 @@ BIGNUM * mon_prod(BIGNUM * a, BIGNUM * b, BIGNUM * N, int R_length, BIGNUM * Ni)
     //    m = ((t & (r - 1)) * n_inv) & (r - 1)
     //    u = (t + m * n) >> (r.bit_length() - 1)
 */
+/*    printf("=======================\n");*/
     BN_CTX * ctx = BN_CTX_new();
     BN_mul(t, a, b, ctx);
-    BN_mask_bits(t,  R_length); /*t mod r*/
 
+/*    printf("t = (a*b) = %s\n", BN_bn2dec(t));*/
 
-    BN_mul(m, t, Ni, ctx);
-    BN_mask_bits( m, R_length);
+    BN_mod_mul(m, t, Ni, R ,ctx);
+
+/*    printf("m = (t*Ni)mod R = %s\n", BN_bn2dec(m));*/
 
     BN_mul(u, m, N, ctx);
+/*    printf("u = m*N = %s\n", BN_bn2dec(u));*/
     BN_add(m, u, t);
+/*    printf("m = u+t = %s\n", BN_bn2dec(m));*/
     BN_rshift(u, m, R_length);
-
+/*    printf("u = m/R = %s\n\n", BN_bn2dec(u));*/
 
     if (BN_cmp(u, N) >= 0 ){
         BN_sub(m, u, N);
+/*        printf("doing final reduction \n\n\n");*/
         BN_free(u);
         BN_free(t);
+        BN_CTX_free(ctx);
         return m;
     }
     BN_free(t);
     BN_free(m);
+    BN_CTX_free(ctx);
     return u;
 
 }
@@ -70,33 +113,55 @@ montgomery_mult(PyObject *self, PyObject *args)
 */
     BIGNUM * N = BN_new();
     BIGNUM * Ni = BN_new();
+    BIGNUM * R = BN_new();
+    BIGNUM * Ri = BN_new();
 
     BIGNUM * ot = BN_new();
     BIGNUM * st = BN_new();
-
-/*    st = BN_bin2bn(y_bin, 4, st);
-    x = BN_bin2bn(x_bin, 5, x);
-*/
+    BIGNUM * one = BN_new();
 
     char * a, *b, *n, *n_inv, *bit_exp, *sts;
+    char *r;
     int length;
-    int i, tmp;
-    if (!PyArg_ParseTuple(args, "sssiss", &a, &b, &n, &length, &n_inv, &bit_exp ))
+    const char one_str[] = "1";
+    unsigned int i, tmp;
+    if (!PyArg_ParseTuple(args, "sssisss", &a, &b, &n, &length, &n_inv, &bit_exp, &r))
         return NULL;
 
+
+
+    tmp = BN_dec2bn(&one, one_str);
     tmp = BN_dec2bn(&N, (const char*) n);
+/*
     tmp = BN_dec2bn(&Ni,(const char*) n_inv) ;
-    tmp = BN_dec2bn(&ot,(const char*) a);
-    tmp = BN_dec2bn(&st,(const char*) b);
+*/
+    tmp = BN_dec2bn(&st,(const char*) a);
+    tmp = BN_dec2bn(&ot,(const char*) b);
+    tmp = BN_dec2bn(&R,(const char*) r);
+
+    printf("+++++++++init+++++++++++\nR = %s\nN = %s\n",
+           BN_bn2dec(R), BN_bn2dec(N));
+    extendedEuclid(R, Ri, N, Ni);
+
+/*
+    printf("bit exp=%s\n st=%s\n ot=%s\n n=%s\n ninv=%s\n l=%i\n",
+           bit_exp, a, b, n, n_inv, length);
+    printf("strlen exponent %i\n", (int)strlen(bit_exp));
+*/
+
+    printf("Ri = %s\nNi = %s\n", BN_bn2dec(Ri), BN_bn2dec(Ni));
+
 
     for( i = 0; i < strlen(bit_exp); i++){
-        st = mon_prod(st, st, N, length, Ni);
-        if( i == '1' ){
-            st = mon_prod(st, ot, N, length, Ni);
+        st = mon_prod(st, st, N, length, Ni,R);
+        if( bit_exp[i] == '1' ){
+            st = mon_prod(st, ot, N, length, Ni, R);
         }
     }
 
-    sts =  BN_bn2dec(st);
+    st = mon_prod(st, one, N, length, Ni, R);
+
+    sts = BN_bn2dec(st);
     return Py_BuildValue("s", sts);
 }
 

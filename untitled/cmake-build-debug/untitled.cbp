@@ -84,10 +84,7 @@
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/home/vydra/PycharmProjects/untitled/cmake-build-debug/openssl_mont.cpp">
-			<Option target="untitled"/>
-		</Unit>
-		<Unit filename="/home/vydra/PycharmProjects/untitled/main.cpp">
+		<Unit filename="/home/vydra/PycharmProjects/untitled/montgomery.c">
 			<Option target="untitled"/>
 		</Unit>
 		<Unit filename="/home/vydra/PycharmProjects/untitled/CMakeLists.txt">

@@ -57,67 +57,41 @@ include CMakeFiles/untitled.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/untitled.dir/flags.make
 
-CMakeFiles/untitled.dir/main.cpp.o: CMakeFiles/untitled.dir/flags.make
-CMakeFiles/untitled.dir/main.cpp.o: ../main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/vydra/PycharmProjects/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/untitled.dir/main.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/untitled.dir/main.cpp.o -c /home/vydra/PycharmProjects/untitled/main.cpp
+CMakeFiles/untitled.dir/montgomery.c.o: CMakeFiles/untitled.dir/flags.make
+CMakeFiles/untitled.dir/montgomery.c.o: ../montgomery.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/vydra/PycharmProjects/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/untitled.dir/montgomery.c.o"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/untitled.dir/montgomery.c.o   -c /home/vydra/PycharmProjects/untitled/montgomery.c
 
-CMakeFiles/untitled.dir/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/untitled.dir/main.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/vydra/PycharmProjects/untitled/main.cpp > CMakeFiles/untitled.dir/main.cpp.i
+CMakeFiles/untitled.dir/montgomery.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/untitled.dir/montgomery.c.i"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /home/vydra/PycharmProjects/untitled/montgomery.c > CMakeFiles/untitled.dir/montgomery.c.i
 
-CMakeFiles/untitled.dir/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/untitled.dir/main.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/vydra/PycharmProjects/untitled/main.cpp -o CMakeFiles/untitled.dir/main.cpp.s
+CMakeFiles/untitled.dir/montgomery.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/untitled.dir/montgomery.c.s"
+	/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /home/vydra/PycharmProjects/untitled/montgomery.c -o CMakeFiles/untitled.dir/montgomery.c.s
 
-CMakeFiles/untitled.dir/main.cpp.o.requires:
+CMakeFiles/untitled.dir/montgomery.c.o.requires:
 
-.PHONY : CMakeFiles/untitled.dir/main.cpp.o.requires
+.PHONY : CMakeFiles/untitled.dir/montgomery.c.o.requires
 
-CMakeFiles/untitled.dir/main.cpp.o.provides: CMakeFiles/untitled.dir/main.cpp.o.requires
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/main.cpp.o.provides.build
-.PHONY : CMakeFiles/untitled.dir/main.cpp.o.provides
+CMakeFiles/untitled.dir/montgomery.c.o.provides: CMakeFiles/untitled.dir/montgomery.c.o.requires
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/montgomery.c.o.provides.build
+.PHONY : CMakeFiles/untitled.dir/montgomery.c.o.provides
 
-CMakeFiles/untitled.dir/main.cpp.o.provides.build: CMakeFiles/untitled.dir/main.cpp.o
-
-
-CMakeFiles/untitled.dir/openssl_mont.cpp.o: CMakeFiles/untitled.dir/flags.make
-CMakeFiles/untitled.dir/openssl_mont.cpp.o: openssl_mont.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/vydra/PycharmProjects/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/untitled.dir/openssl_mont.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/untitled.dir/openssl_mont.cpp.o -c /home/vydra/PycharmProjects/untitled/cmake-build-debug/openssl_mont.cpp
-
-CMakeFiles/untitled.dir/openssl_mont.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/untitled.dir/openssl_mont.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/vydra/PycharmProjects/untitled/cmake-build-debug/openssl_mont.cpp > CMakeFiles/untitled.dir/openssl_mont.cpp.i
-
-CMakeFiles/untitled.dir/openssl_mont.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/untitled.dir/openssl_mont.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/vydra/PycharmProjects/untitled/cmake-build-debug/openssl_mont.cpp -o CMakeFiles/untitled.dir/openssl_mont.cpp.s
-
-CMakeFiles/untitled.dir/openssl_mont.cpp.o.requires:
-
-.PHONY : CMakeFiles/untitled.dir/openssl_mont.cpp.o.requires
-
-CMakeFiles/untitled.dir/openssl_mont.cpp.o.provides: CMakeFiles/untitled.dir/openssl_mont.cpp.o.requires
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/openssl_mont.cpp.o.provides.build
-.PHONY : CMakeFiles/untitled.dir/openssl_mont.cpp.o.provides
-
-CMakeFiles/untitled.dir/openssl_mont.cpp.o.provides.build: CMakeFiles/untitled.dir/openssl_mont.cpp.o
+CMakeFiles/untitled.dir/montgomery.c.o.provides.build: CMakeFiles/untitled.dir/montgomery.c.o
 
 
 # Object files for target untitled
 untitled_OBJECTS = \
-"CMakeFiles/untitled.dir/main.cpp.o" \
-"CMakeFiles/untitled.dir/openssl_mont.cpp.o"
+"CMakeFiles/untitled.dir/montgomery.c.o"
 
 # External object files for target untitled
 untitled_EXTERNAL_OBJECTS =
 
-untitled: CMakeFiles/untitled.dir/main.cpp.o
-untitled: CMakeFiles/untitled.dir/openssl_mont.cpp.o
+untitled: CMakeFiles/untitled.dir/montgomery.c.o
 untitled: CMakeFiles/untitled.dir/build.make
 untitled: CMakeFiles/untitled.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/vydra/PycharmProjects/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable untitled"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/vydra/PycharmProjects/untitled/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking C executable untitled"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/untitled.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -125,8 +99,7 @@ CMakeFiles/untitled.dir/build: untitled
 
 .PHONY : CMakeFiles/untitled.dir/build
 
-CMakeFiles/untitled.dir/requires: CMakeFiles/untitled.dir/main.cpp.o.requires
-CMakeFiles/untitled.dir/requires: CMakeFiles/untitled.dir/openssl_mont.cpp.o.requires
+CMakeFiles/untitled.dir/requires: CMakeFiles/untitled.dir/montgomery.c.o.requires
 
 .PHONY : CMakeFiles/untitled.dir/requires
 

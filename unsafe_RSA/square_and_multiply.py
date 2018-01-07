@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-
+import montgomery
 
 def montgomery_product(a, b, n, r, n_inv):
     t = (a * b)         #trvani operaci, bignum, shift po slovech
@@ -41,23 +41,37 @@ def square_and_multiply(ot, n, e):
 
     ot = (ot * r) % n
     st = (1 * r) % n
-    for i in "{0:b}".format(int(e)):
-        st = montgomery_product(st, st, n, r, n_inv)
-        if i == '1':
-            st = montgomery_product(st, ot, n, r, n_inv)
-    return montgomery_product(st, 1, n, r, n_inv)
+
+#    print("r = ", r)
+#    print("st =", st, "\not =", ot)
+
+#    for i in "{0:b}".format(int(e)):
+#        st = montgomery_product(st, st, n, r, n_inv)
+#        if i == '1':
+#            st = montgomery_product(st, ot, n, r, n_inv)
+#    return montgomery_product(st, 1, n, r, n_inv)
 
 
-#a = 5
-#b = 3
-#n = 13
-#
-#print(square_and_multiply(a, n, b))
+
+#    print("getting to C")
+    st = montgomery.mult(str(st), str(ot), str(n), r.bit_length() - 1, str(n_inv), "{0:b}".format(int(e)), str(r))
+ #   print("leaving C ", st)
+    return int(st)
+
+
+
+
+a = 5
+e = 3
+n = 13
+
+print(square_and_multiply(a, n, e)) # 8
 
 #ot = 1520
 #p = 43
 #q = 59
 #e = 13
 #n = p * q
+#print(n)
 #fi = (p - 1) * (q - 1)
-#print(square_and_multiply(ot, p, q, e))
+#print(square_and_multiply(ot, n, e)) # 95

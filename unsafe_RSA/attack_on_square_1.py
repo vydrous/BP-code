@@ -65,19 +65,19 @@ d = '1'
 posbits = 1
 i = 2
 message_times = dict()
-message_range = 10000
+message_range = 50000
 
 gc.disable()
 for it in range(0, message_range):
     tmp = random.randint(int(n ** 0.5), n)
 
 
-#    t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
-#    time = t.timeit(10)
-    t = time.process_time()
-    decrypt.decrypt(int(tmp))
-    est = time.process_time()
-    est = est - t
+    t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
+    time = t.timeit(10)
+#    t = time.process_time()
+#    decrypt.decrypt(int(tmp))
+#    est = time.process_time()
+#    est = est - t
     message_times[tmp] = est
     gc.collect()
 

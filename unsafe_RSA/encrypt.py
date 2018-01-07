@@ -6,7 +6,7 @@ from Crypto.PublicKey import RSA
 
 def encrypt(ot):
 
-    with open('/opt/project/keys/public.pem') as r:
+    with open('../keys/public.pem') as r:
 
         RSAkey = RSA.importKey(r.read(), '1234')
 

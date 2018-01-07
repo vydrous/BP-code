@@ -1,1 +1,1 @@
-/usr/bin/c++  -g   CMakeFiles/untitled.dir/main.cpp.o CMakeFiles/untitled.dir/openssl_mont.cpp.o  -o untitled -lcrypto 
+/usr/bin/cc -g   CMakeFiles/untitled.dir/montgomery.c.o  -o untitled -lcrypto 

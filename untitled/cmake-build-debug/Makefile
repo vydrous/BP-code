@@ -123,59 +123,32 @@ untitled/fast:
 	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/build
 .PHONY : untitled/fast
 
-main.o: main.cpp.o
+montgomery.o: montgomery.c.o
 
-.PHONY : main.o
-
-# target to build an object file
-main.cpp.o:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/main.cpp.o
-.PHONY : main.cpp.o
-
-main.i: main.cpp.i
-
-.PHONY : main.i
-
-# target to preprocess a source file
-main.cpp.i:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/main.cpp.i
-.PHONY : main.cpp.i
-
-main.s: main.cpp.s
-
-.PHONY : main.s
-
-# target to generate assembly for a file
-main.cpp.s:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/main.cpp.s
-.PHONY : main.cpp.s
-
-openssl_mont.o: openssl_mont.cpp.o
-
-.PHONY : openssl_mont.o
+.PHONY : montgomery.o
 
 # target to build an object file
-openssl_mont.cpp.o:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/openssl_mont.cpp.o
-.PHONY : openssl_mont.cpp.o
+montgomery.c.o:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/montgomery.c.o
+.PHONY : montgomery.c.o
 
-openssl_mont.i: openssl_mont.cpp.i
+montgomery.i: montgomery.c.i
 
-.PHONY : openssl_mont.i
+.PHONY : montgomery.i
 
 # target to preprocess a source file
-openssl_mont.cpp.i:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/openssl_mont.cpp.i
-.PHONY : openssl_mont.cpp.i
+montgomery.c.i:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/montgomery.c.i
+.PHONY : montgomery.c.i
 
-openssl_mont.s: openssl_mont.cpp.s
+montgomery.s: montgomery.c.s
 
-.PHONY : openssl_mont.s
+.PHONY : montgomery.s
 
 # target to generate assembly for a file
-openssl_mont.cpp.s:
-	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/openssl_mont.cpp.s
-.PHONY : openssl_mont.cpp.s
+montgomery.c.s:
+	$(MAKE) -f CMakeFiles/untitled.dir/build.make CMakeFiles/untitled.dir/montgomery.c.s
+.PHONY : montgomery.c.s
 
 # Help Target
 help:
@@ -186,12 +159,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
 	@echo "... untitled"
-	@echo "... main.o"
-	@echo "... main.i"
-	@echo "... main.s"
-	@echo "... openssl_mont.o"
-	@echo "... openssl_mont.i"
-	@echo "... openssl_mont.s"
+	@echo "... montgomery.o"
+	@echo "... montgomery.i"
+	@echo "... montgomery.s"
 .PHONY : help
 
 

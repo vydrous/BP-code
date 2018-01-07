@@ -1,11 +1,10 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/untitled.dir/main.cpp.o"
-  "CMakeFiles/untitled.dir/openssl_mont.cpp.o"
+  "CMakeFiles/untitled.dir/montgomery.c.o"
   "untitled.pdb"
   "untitled"
 )
 
 # Per-language clean rules from dependency scanning.
-foreach(lang CXX)
+foreach(lang C)
   include(CMakeFiles/untitled.dir/cmake_clean_${lang}.cmake OPTIONAL)
 endforeach()
