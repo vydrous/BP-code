@@ -20,40 +20,40 @@
 MCTX * init_context(){
 };*/
 
-int extendedEuclid (BIGNUM * a, BIGNUM * x, BIGNUM * b, BIGNUM * y){
+BIGNUM * extendedEuclid (BIGNUM * a, BIGNUM * x, BIGNUM * b, BIGNUM * y){
 
     BIGNUM * zero = BN_new();
     BIGNUM * tmp = BN_new();
     BIGNUM * y1 = BN_new();
     BIGNUM * x1 = BN_new();
+    BIGNUM * res;
     BN_CTX * ctx = BN_CTX_new();
 
     BN_dec2bn(&zero, "0");
 
-    printf("%s\n", BN_bn2dec(a));
 
     if (BN_cmp(a,zero) == 0) {
         BN_dec2bn(&x, "0");
         BN_dec2bn(&y, "1");
 
-		return 0;
+		return b;
 	}
     BN_mod(tmp, b, a, ctx);
-    extendedEuclid(tmp, x1, a, y1);
+    res = extendedEuclid(tmp, x1, a, y1);
 
     BN_div(x, NULL, b, a, ctx);
     BN_mul(x, x, x1, ctx);
     BN_sub(x, y1, x);
 
-    y = x1;
+    BN_copy(y,x1);
 
-    printf("++++++++++++++++++++\na = %s\nb = %s\nx = %s\ny = %s\nx1 = %s\ny1 = %s\n",
+/*    printf("++++++++++++++++++++\na = %s\nb = %s\nx = %s\ny = %s\nx1 = %s\ny1 = %s\n",
            BN_bn2dec(a), BN_bn2dec(b),
            BN_bn2dec(x), BN_bn2dec(y),
-           BN_bn2dec(x1), BN_bn2dec(y1));
+           BN_bn2dec(x1), BN_bn2dec(y1));*/
 
     BN_CTX_free(ctx);
-    return 0;
+    return res;
 }
 
 
@@ -119,29 +119,29 @@ montgomery_mult(PyObject *self, PyObject *args)
     BIGNUM * ot = BN_new();
     BIGNUM * st = BN_new();
     BIGNUM * one = BN_new();
+    BN_CTX * ctx = BN_CTX_new();
 
-    char * a, *b, *n, *n_inv, *bit_exp, *sts;
+    char * a, *n, *bit_exp, *sts;
     char *r;
     int length;
-    const char one_str[] = "1";
     unsigned int i, tmp;
-    if (!PyArg_ParseTuple(args, "sssisss", &a, &b, &n, &length, &n_inv, &bit_exp, &r))
+    if (!PyArg_ParseTuple(args, "ssss", &a, &n,  &bit_exp, &r))
         return NULL;
 
+    length = strlen(r);
 
-
-    tmp = BN_dec2bn(&one, one_str);
+    tmp = BN_dec2bn(&one, "1");
     tmp = BN_dec2bn(&N, (const char*) n);
 /*
     tmp = BN_dec2bn(&Ni,(const char*) n_inv) ;
 */
-    tmp = BN_dec2bn(&st,(const char*) a);
-    tmp = BN_dec2bn(&ot,(const char*) b);
+    tmp = BN_dec2bn(&ot,(const char*) a);
+/*    tmp = BN_dec2bn(&ot,(const char*) b);*/
     tmp = BN_dec2bn(&R,(const char*) r);
 
-    printf("+++++++++init+++++++++++\nR = %s\nN = %s\n",
+/*    printf("+++++++++init+++++++++++\nR = %s\nN = %s\n",
            BN_bn2dec(R), BN_bn2dec(N));
-    extendedEuclid(R, Ri, N, Ni);
+    extendedEuclid(R, Ri, N, Ni);*/
 
 /*
     printf("bit exp=%s\n st=%s\n ot=%s\n n=%s\n ninv=%s\n l=%i\n",
@@ -149,8 +149,15 @@ montgomery_mult(PyObject *self, PyObject *args)
     printf("strlen exponent %i\n", (int)strlen(bit_exp));
 */
 
-    printf("Ri = %s\nNi = %s\n", BN_bn2dec(Ri), BN_bn2dec(Ni));
+    BN_set_negative(Ni,1);
+    BN_mod(Ni, Ni, R, ctx);
 
+/*    printf("Ri = %s\nNi = %s\n", BN_bn2dec(Ri), BN_bn2dec(Ni));*/
+
+    BN_mod_mul(ot, ot, R, N, ctx);
+
+    BN_mod_mul(st, one, R, N, ctx);
+/*    printf("st = %s\not = %s\n", BN_bn2dec(st), BN_bn2dec(ot));*/
 
     for( i = 0; i < strlen(bit_exp); i++){
         st = mon_prod(st, st, N, length, Ni,R);
