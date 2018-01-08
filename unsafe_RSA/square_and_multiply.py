@@ -19,6 +19,7 @@ def egcd(a, b):
         return (b, 0, 1)
     else:
         g, y, x = egcd(b % a, a)
+
         return (g, x - (b // a) * y, y)
 
 
@@ -30,17 +31,17 @@ def egcd(a, b):
 #        return x % m
 
 
-def square_and_multiply(ot, n, e):
-    r = 2 ** (n.bit_length())
-    g, n_inv, r_inv = egcd(n, r)
-
-    if (r * r_inv + n * n_inv) == 1:
-        n_inv = -n_inv % r
-    else:
-        raise Exception("bad GCD")
-
-    ot = (ot * r) % n
-    st = (1 * r) % n
+def square_and_multiply(ot, n, e, r):
+#    g, n_inv, r_inv = egcd(n, r)
+#
+#    if (r * r_inv + n * n_inv) == 1:
+#        n_inv = -n_inv % r
+#    else:
+#        raise Exception("bad GCD")
+#    print(r_inv, "*", r, "+", n_inv, "*", n, "= 1")
+#
+#    ot = (ot * r) % n
+#    st = (1 * r) % n
 
 #    print("r = ", r)
 #    print("st =", st, "\not =", ot)
@@ -54,18 +55,20 @@ def square_and_multiply(ot, n, e):
 
 
 #    print("getting to C")
-    st = montgomery.mult(str(st), str(ot), str(n), r.bit_length() - 1, str(n_inv), "{0:b}".format(int(e)), str(r))
+ #   st = montgomery.mult(str(ot), str(n), r.bit_length() - 1, "{0:b}".format(int(e)), str(r))
  #   print("leaving C ", st)
-    return int(st)
+    return int(montgomery.mult(str(ot), str(n), "{0:b}".format(int(e)), str(r)))
 
 
 
 
-a = 5
-e = 3
-n = 13
+#a = 5
+#e = 3
+#n = 13
+#
+#r = 2 ** (n.bit_length())
 
-print(square_and_multiply(a, n, e)) # 8
+#print(square_and_multiply(a, n, e,r)) # 8
 
 #ot = 1520
 #p = 43

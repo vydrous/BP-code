@@ -12,4 +12,5 @@ def decrypt(st):
     d = getattr(privKey.key, 'd')
 
 
-    return square_and_multiply.square_and_multiply(int(st), n, d)
+    r = 2 ** (n.bit_length())
+    return square_and_multiply.square_and_multiply(int(st), n, d, r)

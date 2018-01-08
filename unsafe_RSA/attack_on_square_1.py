@@ -34,10 +34,10 @@ global r
 global n_inv
 global n
 
-with open('/opt/project/keys/public.pem') as pub:
+with open('../keys/public.pem') as pub:
     pubkey = RSA.importKey(pub.read(), '1234')
 
-with open('/opt/project/keys/private.pem') as priv:
+with open('../keys/private.pem') as priv:
     privKey = RSA.importKey(priv.read(), '1234')
 
 desired_d = getattr(privKey.key, 'd')
@@ -65,7 +65,7 @@ d = '1'
 posbits = 1
 i = 2
 message_times = dict()
-message_range = 50000
+message_range = 500
 
 gc.disable()
 for it in range(0, message_range):
@@ -73,12 +73,12 @@ for it in range(0, message_range):
 
 
     t = timeit.Timer('decrypt.decrypt(int(m1))', setup='import decrypt; m1 = %i' % tmp)
-    time = t.timeit(10)
+    time = t.timeit(1)
 #    t = time.process_time()
 #    decrypt.decrypt(int(tmp))
 #    est = time.process_time()
 #    est = est - t
-    message_times[tmp] = est
+    message_times[tmp] = time
     gc.collect()
 
 gc.enable()

@@ -15,7 +15,7 @@ def encrypt(ot):
 
     n = getattr(RSAkey.key, 'n')
     e = getattr(RSAkey.key, 'e')
-    return square_and_multiply.square_and_multiply(ot, n, e)
+    return square_and_multiply.square_and_multiply(ot, n, e, r)
 
 
 
