@@ -57,18 +57,18 @@ def square_and_multiply(ot, n, e, r):
 #    print("getting to C")
  #   st = montgomery.mult(str(ot), str(n), r.bit_length() - 1, "{0:b}".format(int(e)), str(r))
  #   print("leaving C ", st)
-    return int(montgomery.mult(str(ot), str(n), "{0:b}".format(int(e)), str(r)))
+    return int(montgomery.mult(str(ot), str(n), "{0:b}".format(int(e)), str(r), n.bit_length()))
 
 
 
 
-#a = 5
-#e = 3
-#n = 13
+# a = 5
+# e = 3
+# n = 13
 #
-#r = 2 ** (n.bit_length())
-
-#print(square_and_multiply(a, n, e,r)) # 8
+# r = 16
+#
+# print(square_and_multiply(a, n, e, r)) # 8
 
 #ot = 1520
 #p = 43
