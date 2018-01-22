@@ -31,7 +31,7 @@ def egcd(a, b):
 #        return x % m
 
 
-def square_and_multiply(ot, n, e, r):
+def square_and_multiply(ot, n, e, r, ninv):
 #    g, n_inv, r_inv = egcd(n, r)
 #
 #    if (r * r_inv + n * n_inv) == 1:
@@ -57,7 +57,7 @@ def square_and_multiply(ot, n, e, r):
 #    print("getting to C")
  #   st = montgomery.mult(str(ot), str(n), r.bit_length() - 1, "{0:b}".format(int(e)), str(r))
  #   print("leaving C ", st)
-    return int(montgomery.mult(str(ot), str(n), "{0:b}".format(int(e)), str(r), n.bit_length()))
+    return int(montgomery.mult(str(ot), str(n), "{0:b}".format(int(e)), str(r), n.bit_length(), str(ninv) ))
 
 
 

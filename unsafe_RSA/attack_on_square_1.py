@@ -195,12 +195,12 @@ while not found:
 
     test_msg = m1_dict.popitem()[0]
 
-    if square_and_multiply.square_and_multiply(encrypt.encrypt(test_msg), n, d + '1', r) == test_msg:
+    if square_and_multiply.square_and_multiply(encrypt.encrypt(test_msg), n, d + '1', r, n_inv) == test_msg:
         print("found")
         found = 1
         d += '1'
     else:
-        if square_and_multiply.square_and_multiply(encrypt.encrypt(test_msg), n, d + '0', r) == test_msg:
+        if square_and_multiply.square_and_multiply(encrypt.encrypt(test_msg), n, d + '0', r, n_inv) == test_msg:
             print("found")
             found = 1
             d += '0'
